@@ -50,6 +50,31 @@ fn str_longer<'a>(s1: &'a String, s2: &'a String) -> &'a String{
 //------------------------------------------------------------ main
 fn main() {
     println!("Hello, world!");
+                                                                //Move
+    let a = String::from("AAA"); // ヒープ領域のメモリ確保
+    let b = a; // ムーブ（ヒープ領域の所有権がポインタ変数`a`から`b`へ移った。ヒープ領域の所有は必ず1つのポインタ変数のみ）
+    println!("b = {}", b); // OK
+    //println!("a = {}", a); // エラー
+
+    let mut s = String::from("hello");
+    let r1 = &mut s;
+    //let r2 = &mut s; // error[E0499]: cannot borrow `s` as mutable more than once at a time
+    //可変参照は1つのみ
+    //r2.push_str("_k");
+    r1.push_str("_m");
+    println!("{}", s);
+    
+    let mut s2 = String::from("hello");
+    {
+         let r1 = &mut s2;
+    } // r1はここでスコープを抜けて無効化（メモリ解放）されるので、以降はsの可変参照を作れる
+    let r2 = &mut s2;
+
+    let mut s3 = String::from("hello");
+    let r1 = &s3; // OK
+    let r2 = &s3; // OK
+    //let r3 = &mut s3; // error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable
+    //不変で借用されているのに可変で借用しようとしたらエラー
 
 //-- hard code
     let s1: &str = "hello";   
@@ -78,4 +103,13 @@ fn main() {
     let s8 = String::from(", world!");
     let s9 = str_longer(&s7 , &s8);
     print6(&s9);
+
+    let s7 = String::from("hello");     // str_longer
+    let s8 = String::from(", world!");
+    {
+     let s9 = str_longer(&s7 , &s8);
+     print6(&s9);
+    }
+
+
 }
